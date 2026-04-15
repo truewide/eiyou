@@ -54,7 +54,7 @@ const beauty=new Set(["vitC","vitE","iron","zinc","protein","vitA","vitB6","fola
 function F(n,o){const r={};K.forEach(k=>r[k]=0);r.name=n;Object.entries(o).forEach(([k,v])=>r[k]=v);return r}
 
 const BB=F("ベースブレッド チョコ",{energy:255,protein:13.5,fiber:3.4,vitA:166,vitD:1.2,vitE:1.4,vitK:26.6,vitB1:.4,vitB2:.3,niacin:8.5,vitB6:.4,vitB12:.5,folate:108,panto:1.1,vitC:19,calcium:114,magnesium:68,iron:1.4,zinc:1.6,copper:.2});
-const WH=F("プロテイン 1杯",{energy:120,protein:24,calcium:80,magnesium:10});
+const WH=F("ザバス プロテイン 1杯",{energy:111,protein:19.5,fiber:1.4,vitB1:0.67,vitB2:0.76,niacin:9.35,vitB6:0.56,vitC:43,vitD:12.1,calcium:0,magnesium:0});
 const PS=F("サイリウムハスク 5g",{energy:1,fiber:4.5});
 const CK=F("サラダチキン",{energy:125,protein:25,vitA:10,vitD:.1,vitE:.3,vitK:5,vitB1:.05,vitB2:.08,niacin:10,vitB6:.5,vitB12:.2,folate:10,panto:1.5,vitC:2,calcium:5,magnesium:25,iron:.3,zinc:.7,copper:.03});
 const ON=F("おにぎり 鮭",{energy:180,protein:5,fiber:.5,vitA:5,vitD:3,vitE:.3,vitB1:.02,vitB2:.03,niacin:2,vitB6:.1,vitB12:2,folate:5,panto:.3,calcium:10,magnesium:10,iron:.3,zinc:.3,copper:.02});
@@ -78,6 +78,7 @@ const plans=[
 
 const products=[
   {name:"ベースブレッド チョコレート 16袋",url:"https://www.amazon.co.jp/dp/B088R2M7GV",note:"Amazonで購入可"},
+  {name:"ザバス ホエイプロテイン100 リッチショコラ 1kg",url:"https://www.amazon.co.jp/dp/B0B9G4QR1M",note:"1杯28gでタンパク質約20g"},
   {name:"サイリウムハスク 200g",url:"https://www.amazon.co.jp/dp/B086X63B2L",note:"国内製造。1日5g"},
   {name:"NOW L-OptiZinc 30mg 100粒",url:"https://www.amazon.co.jp/dp/B07G2F85HG",note:"キレート亜鉛+銅。1日1粒"},
   {name:"NOW ビタミンC 1000mg 100粒",url:"https://www.amazon.co.jp/dp/B086R3DCC5",note:"1日1粒"}
