@@ -1,0 +1,140 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>個人用栄養プラン by Claude</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0f0f0f;color:#e8e8e8;max-width:420px;margin:0 auto;padding:12px 16px;-webkit-font-smoothing:antialiased}
+h1{font-size:18px;font-weight:800;text-align:center;margin-bottom:16px}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tab{flex:1;padding:10px 0;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:500;background:#1a1a1a;color:#999;transition:all .2s}
+.tab.active{background:#3b82f6;color:#fff;font-weight:700}
+.desc{font-size:13px;color:#888;text-align:center;margin-bottom:12px}
+.stats{display:flex;justify-content:center;gap:20px;margin-bottom:14px}
+.stat-val{font-size:20px;font-weight:800;text-align:center}
+.stat-label{font-size:10px;color:#666;text-align:center}
+.meal{margin-bottom:8px;padding:10px 12px;background:#1a1a1a;border-radius:10px}
+.meal-label{font-weight:700;font-size:13px;margin-bottom:4px}
+.meal-item{display:flex;justify-content:space-between;font-size:13px;color:#aaa;padding:2px 0}
+.meal-kcal{color:#555;font-size:12px}
+.toggle-btn{width:100%;margin-top:12px;padding:10px 0;border-radius:10px;border:1px solid #333;background:transparent;color:#aaa;font-size:13px;font-weight:600;cursor:pointer}
+.shop-btn{width:100%;margin-top:12px;padding:12px 0;border-radius:10px;border:none;background:#3b82f6;color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+.detail-row{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.detail-name{font-size:11px;width:72px;flex-shrink:0}
+.detail-name.beauty{font-weight:600}
+.bar-bg{flex:1;height:6px;background:#222;border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .3s}
+.bar-pct{font-size:11px;min-width:36px;text-align:right}
+.product{padding:10px 12px;background:#1a1a1a;border-radius:10px;margin-bottom:8px}
+.product-name{font-size:13px;font-weight:600}
+.product-note{font-size:11px;color:#666;margin-top:2px}
+.product a{font-size:11px;color:#3b82f6;word-break:break-all;display:inline-block;margin-top:4px}
+.hidden{display:none}
+</style>
+
+<h1>栄養プラン</h1>
+
+<div class="tabs" id="tabs"></div>
+<p class="desc" id="desc"></p>
+
+<div class="stats" id="stats"></div>
+
+<div id="meals"></div>
+
+<button class="toggle-btn" id="detailBtn" onclick="toggleDetail()">▼ 充足率を見る</button>
+<div id="detailPanel" class="hidden"></div>
+
+<button class="shop-btn" id="shopBtn" onclick="toggleShop()">🛒 買い物リスト</button>
+<div id="shopPanel" class="hidden" style="margin-top:10px"></div>
+
+<script>
+const T={energy:{n:"エネルギー",v:2100},protein:{n:"たんぱく質",v:65},fiber:{n:"食物繊維",v:21},vitA:{n:"ビタミンA",v:850},vitD:{n:"ビタミンD",v:8.5},vitE:{n:"ビタミンE",v:6},vitK:{n:"ビタミンK",v:150},vitB1:{n:"B1",v:1.4},vitB2:{n:"B2",v:1.6},niacin:{n:"ナイアシン",v:15},vitB6:{n:"B6",v:1.4},vitB12:{n:"B12",v:2.4},folate:{n:"葉酸",v:240},panto:{n:"パントテン酸",v:5},vitC:{n:"ビタミンC",v:100},calcium:{n:"Ca",v:800},magnesium:{n:"Mg",v:340},iron:{n:"鉄",v:7.5},zinc:{n:"亜鉛",v:11},copper:{n:"銅",v:0.9}};
+const K=Object.keys(T);
+const beauty=new Set(["vitC","vitE","iron","zinc","protein","vitA","vitB6","folate"]);
+
+function F(n,o){const r={};K.forEach(k=>r[k]=0);r.name=n;Object.entries(o).forEach(([k,v])=>r[k]=v);return r}
+
+const BB=F("ベースブレッド チョコ",{energy:255,protein:13.5,fiber:3.4,vitA:166,vitD:1.2,vitE:1.4,vitK:26.6,vitB1:.4,vitB2:.3,niacin:8.5,vitB6:.4,vitB12:.5,folate:108,panto:1.1,vitC:19,calcium:114,magnesium:68,iron:1.4,zinc:1.6,copper:.2});
+const WH=F("プロテイン 1杯",{energy:120,protein:24,calcium:80,magnesium:10});
+const PS=F("サイリウムハスク 5g",{energy:1,fiber:4.5});
+const CK=F("サラダチキン",{energy:125,protein:25,vitA:10,vitD:.1,vitE:.3,vitK:5,vitB1:.05,vitB2:.08,niacin:10,vitB6:.5,vitB12:.2,folate:10,panto:1.5,vitC:2,calcium:5,magnesium:25,iron:.3,zinc:.7,copper:.03});
+const ON=F("おにぎり 鮭",{energy:180,protein:5,fiber:.5,vitA:5,vitD:3,vitE:.3,vitB1:.02,vitB2:.03,niacin:2,vitB6:.1,vitB12:2,folate:5,panto:.3,calcium:10,magnesium:10,iron:.3,zinc:.3,copper:.02});
+const MI=F("具沢山味噌汁",{energy:60,protein:4,fiber:2,vitA:30,vitE:.3,vitK:15,vitB1:.05,vitB2:.05,niacin:.5,vitB6:.05,vitB12:.3,folate:20,panto:.2,vitC:3,calcium:40,magnesium:20,iron:.8,zinc:.4,copper:.05});
+const NU=F("ミックスナッツ 25g",{energy:155,protein:4,fiber:1.5,vitE:5,vitB1:.05,vitB2:.05,niacin:1,vitB6:.05,folate:15,panto:.2,calcium:30,magnesium:35,iron:.8,zinc:.8,copper:.3});
+const EG=F("ゆで卵",{energy:80,protein:6.5,vitA:75,vitD:1,vitE:.5,vitK:7,vitB1:.03,vitB2:.2,niacin:.1,vitB6:.04,vitB12:.5,folate:25,panto:.7,calcium:25,magnesium:5,iron:.9,zinc:.6,copper:.04});
+const VC=F("ビタミンC 1000mg",{vitC:1000});
+const ZN=F("L-OptiZinc 30mg",{zinc:30,copper:.3});
+
+const plans=[
+  {id:"A",title:"Minimal",emoji:"⚡",desc:"考えるの面倒な日はこれ。",meals:[
+    {l:"🌅 朝",items:[[BB,2],[WH,1]]},{l:"☀️ 昼",items:[[CK,1],[ON,1],[MI,1]]},{l:"🌙 夜",items:[[BB,2],[PS,1]]},{l:"💊",items:[[VC,1],[ZN,1]]}
+  ]},
+  {id:"B",title:"しっかり",emoji:"✨",desc:"ナッツと卵でバランス強化。",meals:[
+    {l:"🌅 朝",items:[[BB,2],[NU,1]]},{l:"☀️ 昼",items:[[CK,1],[ON,1],[EG,1],[MI,1]]},{l:"🌙 夜",items:[[BB,2],[WH,1],[PS,1]]},{l:"💊",items:[[VC,1],[ZN,1]]}
+  ]},
+  {id:"C",title:"コンビニ多め",emoji:"🏪",desc:"朝だけベースブレッド、昼夜はコンビニ。",meals:[
+    {l:"🌅 朝",items:[[BB,2],[WH,1],[NU,1]]},{l:"☀️ 昼",items:[[CK,1],[ON,2],[EG,1]]},{l:"🌙 夜",items:[[ON,1],[MI,1],[EG,1],[PS,1]]},{l:"💊",items:[[VC,1],[ZN,1]]}
+  ]}
+];
+
+const products=[
+  {name:"ベースブレッド チョコレート",url:"https://shop.basefood.co.jp/products/basebread/chocolate",note:"公式継続コースが最安"},
+  {name:"サイリウムハスク 200g",url:"https://www.amazon.co.jp/dp/B086X63B2L",note:"国内製造。1日5g"},
+  {name:"NOW L-OptiZinc 30mg 100粒",url:"https://www.amazon.co.jp/dp/B07G2F85HG",note:"キレート亜鉛+銅。1日1粒"},
+  {name:"NOW ビタミンC 1000mg",url:"https://www.amazon.co.jp/dp/B0013P1GD6",note:"1日1粒"}
+];
+
+let cur=0,showDetail=false,showShop=false;
+
+function calc(p){
+  const t={};K.forEach(k=>t[k]=0);
+  p.meals.forEach(m=>m.items.forEach(([it,q])=>{K.forEach(k=>{t[k]+=(it[k]||0)*q})}));
+  return t;
+}
+
+function barColor(v){return v>=100?(v>200?"#f59e0b":"#10b981"):"#f87171"}
+
+function render(){
+  const p=plans[cur],t=calc(p);
+  document.getElementById("tabs").innerHTML=plans.map((pp,i)=>
+    `<button class="tab${i===cur?" active":""}" onclick="sel(${i})">${pp.emoji} ${pp.title}</button>`
+  ).join("");
+  document.getElementById("desc").textContent=p.desc;
+  document.getElementById("stats").innerHTML=[
+    {v:Math.round(t.energy),l:"kcal"},{v:Math.round(t.protein)+"g",l:"タンパク質"},{v:Math.round(t.fiber)+"g",l:"食物繊維"}
+  ].map(d=>`<div><div class="stat-val">${d.v}</div><div class="stat-label">${d.l}</div></div>`).join("");
+
+  document.getElementById("meals").innerHTML=p.meals.map(m=>
+    `<div class="meal"><div class="meal-label">${m.l}</div>${m.items.map(([it,q])=>
+      `<div class="meal-item"><span>${q>1?it.name+" ×"+q:it.name}</span><span class="meal-kcal">${Math.round(it.energy*q)}kcal</span></div>`
+    ).join("")}</div>`
+  ).join("");
+
+  if(showDetail){
+    document.getElementById("detailPanel").classList.remove("hidden");
+    document.getElementById("detailPanel").innerHTML=K.map(k=>{
+      const pc=Math.round((t[k]/T[k].v)*100),c=barColor(pc),isB=beauty.has(k);
+      return `<div class="detail-row"><span class="detail-name${isB?" beauty":""}">${isB?"✨ ":""}${T[k].n}</span><div class="bar-bg"><div class="bar-fill" style="width:${Math.min(pc/1.5,100)}%;background:${c}"></div></div><span class="bar-pct" style="color:${c};font-weight:${pc>=100?700:400}">${pc}%</span></div>`;
+    }).join("");
+    document.getElementById("detailBtn").textContent="▲ 充足率を閉じる";
+  }else{
+    document.getElementById("detailPanel").classList.add("hidden");
+    document.getElementById("detailBtn").textContent="▼ 充足率を見る";
+  }
+
+  if(showShop){
+    document.getElementById("shopPanel").classList.remove("hidden");
+    document.getElementById("shopPanel").innerHTML=products.map(pr=>
+      `<div class="product"><div class="product-name">${pr.name}</div><div class="product-note">${pr.note}</div><a href="${pr.url}" target="_blank" rel="noopener noreferrer">${pr.url.length>55?pr.url.slice(0,55)+"...":pr.url}</a></div>`
+    ).join("");
+    document.getElementById("shopBtn").textContent="🛒 閉じる";
+  }else{
+    document.getElementById("shopPanel").classList.add("hidden");
+    document.getElementById("shopBtn").textContent="🛒 買い物リスト";
+  }
+}
+
+function sel(i){cur=i;showDetail=false;render()}
+function toggleDetail(){showDetail=!showDetail;render()}
+function toggleShop(){showShop=!showShop;render()}
+render();
+</script>
