@@ -66,22 +66,22 @@ const ZN=F("L-OptiZinc 30mg",{zinc:30,copper:.3});
 
 const plans=[
   {id:"A",title:"Minimal",emoji:"⚡",desc:"考えるの面倒な日はこれ。",meals:[
-    {l:"🌅 朝",items:[[BB,2],[WH,1]]},{l:"☀️ 昼",items:[[CK,1],[ON,1],[MI,1]]},{l:"🌙 夜",items:[[BB,2],[PS,1]]},{l:"💊",items:[[VC,1],[ZN,1]]}
+    {l:"🌅 朝",items:[[BB,2],[WH,1]]},{l:"☀️ 昼",items:[[CK,1],[NU,1]]},{l:"🌙 夜",items:[[BB,2],[PS,1]]},{l:"💊",items:[]}
   ]},
   {id:"B",title:"しっかり",emoji:"✨",desc:"ナッツと卵でバランス強化。",meals:[
-    {l:"🌅 朝",items:[[BB,2],[NU,1]]},{l:"☀️ 昼",items:[[CK,1],[ON,1],[EG,1],[MI,1]]},{l:"🌙 夜",items:[[BB,2],[WH,1],[PS,1]]},{l:"💊",items:[[VC,1],[ZN,1]]}
+    {l:"🌅 朝",items:[[BB,2],[NU,1]]},{l:"☀️ 昼",items:[[CK,1],[WH,1]]},{l:"🌙 夜",items:[[BB,2],[NU,1],[PS,1]]},{l:"💊",items:[]}
   ]},
-  {id:"C",title:"コンビニ多め",emoji:"🏪",desc:"朝だけベースブレッド、昼夜はコンビニ。",meals:[
-    {l:"🌅 朝",items:[[BB,2],[WH,1],[NU,1]]},{l:"☀️ 昼",items:[[CK,1],[ON,2],[EG,1]]},{l:"🌙 夜",items:[[ON,1],[MI,1],[EG,1],[PS,1]]},{l:"💊",items:[[VC,1],[ZN,1]]}
+  {id:"C",title:"タンパク重視",emoji:"💪",desc:"プロテイン2杯でタンパク質を底上げ。",meals:[
+    {l:"🌅 朝",items:[[BB,2],[WH,1]]},{l:"☀️ 昼",items:[[CK,1],[NU,1]]},{l:"🌙 夜",items:[[BB,2],[WH,1],[PS,1]]},{l:"💊",items:[]}
   ]}
 ];
 
 const products=[
-  {name:"ベースブレッド チョコレート 16袋",url:"https://www.amazon.co.jp/dp/B088R2M7GV",note:"Amazonで購入可"},
+  {name:"ベースブレッド チョコレート 16袋",url:"https://www.amazon.co.jp/dp/B088R2M7GV",note:"1食2袋。常温保存OK"},
   {name:"ザバス ホエイプロテイン100 リッチショコラ 1kg",url:"https://www.amazon.co.jp/dp/B0B9G4QR1M",note:"1杯28gでタンパク質約20g"},
-  {name:"サイリウムハスク 200g",url:"https://www.amazon.co.jp/dp/B086X63B2L",note:"国内製造。1日5g"},
-  {name:"NOW L-OptiZinc 30mg 100粒",url:"https://www.amazon.co.jp/dp/B07G2F85HG",note:"キレート亜鉛+銅。1日1粒"},
-  {name:"NOW ビタミンC 1000mg 100粒",url:"https://www.amazon.co.jp/dp/B086R3DCC5",note:"1日1粒"}
+  {name:"uchipac サラダチキン プレーン 10個",url:"https://www.amazon.co.jp/dp/B07L58TQ4P",note:"無添加・国産鶏・常温保存1年7ヶ月"},
+  {name:"素焼きミックスナッツ 小分け 13g×25袋",url:"https://www.amazon.co.jp/dp/B07H7YVKBG",note:"無塩・無添加・食べすぎ防止"},
+  {name:"サイリウムハスク 200g",url:"https://www.amazon.co.jp/dp/B086X63B2L",note:"国内製造。1日5g"}
 ];
 
 let cur=0,showDetail=false,showShop=false;
